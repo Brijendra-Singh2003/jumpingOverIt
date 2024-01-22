@@ -42,36 +42,13 @@ int main()
     for (int i = 0; i < 90; i++)
     {
         prev += 180 - ((rand() * 5) % 365);
-        // if (prev > 1160)
-        // {
-        //     prev = 1160 - (prev - 1160);
-        // }
-        // else if (prev < 60)
-        // {
-        //     prev = 60 - prev;
-        // }
         MAP[i] = prev;
     }
 
     while (!WindowShouldClose())
     {
-        // if (CAMERA_X - PLAYER_X > 100)
-        // {
-        //     CAMERA_X -= 2;
-        // }
-        // if (PLAYER_X - CAMERA_X > 100)
-        // {
         CAMERA_X += (PLAYER_X - CAMERA_X) / 16;
         CAMERA_Y += (PLAYER_Y - CAMERA_Y) / 16;
-        // }
-        // if (CAMERA_Y - PLAYER_Y > 100)
-        // {
-        //     CAMERA_Y -= 2;
-        // }
-        // if (PLAYER_Y - CAMERA_Y > 100)
-        // {
-        //     CAMERA_Y += 2;
-        // }
 
         PLAYER_Y += VELOCITY_Y;
         int8_t y = PLAYER_Y % 90;
@@ -87,8 +64,6 @@ int main()
         if (IsKeyDown(KEY_LEFT) && !(FALLING && (PLAYER_X > MAP[Y] - 30 && PLAYER_X < MAP[Y] + 95 && y > 30)))
         {
             PLAYER_X = PLAYER_X - 5;
-            // if (PLAYER_X < 0)
-            //     PLAYER_X += 1245;
             curr = &TEXTURE_I_MAN_L;
         }
         if (IsKeyDown(KEY_RIGHT) && !(FALLING && (PLAYER_X > MAP[Y] - 35 && PLAYER_X < MAP[Y] + 90 && y > 30)))
