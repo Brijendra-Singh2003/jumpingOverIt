@@ -12,6 +12,7 @@ const int TERMINAL_VELOCITY = -10;
 
 const Color white = {255, 255, 255, 255};
 const Color black = {0, 100, 250, 255};
+const Color background = {0, 228, 48, 255};
 
 bool FALLING = false;
 bool BLOCK_ABOVE;
@@ -29,19 +30,22 @@ int SCORE = 0;
 
 int main()
 {
-    InitWindow(1280, 720, "Hello world");
+    InitWindow(1280, 720, "Jumping Over It");
+    InitAudioDevice();
     SetTargetFPS(60);
 
-    Texture2D TEXTURE_I_MAN_L = LoadTexture("./i-man-l.png");
-    Texture2D TEXTURE_I_MAN_R = LoadTexture("./i-man-r.png");
-    Texture2D TEXTURE_BLOCKS = LoadTexture("./block.png");
-    Texture2D TEXTURE_GROUND = LoadTexture("./bg.png");
+    Texture2D TEXTURE_I_MAN_L = LoadTexture("assets/i-man-l.png");
+    Texture2D TEXTURE_I_MAN_R = LoadTexture("assets/i-man-r.png");
+    Texture2D TEXTURE_BLOCKS = LoadTexture("assets/block.png");
+    Texture2D TEXTURE_GROUND = LoadTexture("assets/bg.png");
+    Sound COMPLETE_FX = LoadSound("resources/mario-end-level.wav");
     Texture2D *curr = &TEXTURE_I_MAN_L;
 
     int prev = 580;
     for (int i = 0; i < 90; i++)
     {
-        prev += 180 - ((rand() * 5) % 365);
+        const int t = rand() % 21;
+        prev += 200 - t * t;
         MAP[i] = prev;
     }
 
@@ -84,14 +88,10 @@ int main()
             {
                 VELOCITY_Y--;
             }
-            else
-            {
-                VELOCITY_Y++;
-            }
 
             if (VELOCITY_Y > 0 && BLOCK_ABOVE)
             {
-                VELOCITY_Y = -VELOCITY_Y;
+                VELOCITY_Y = TERMINAL_VELOCITY;
                 PLAYER_Y += VELOCITY_Y;
             }
             else if (VELOCITY_Y < 0 && BLOCK_ABOVE)
@@ -102,6 +102,10 @@ int main()
                 if (Y + 1 > SCORE)
                 {
                     SCORE = Y + 1;
+                    if (SCORE >= 90)
+                    {
+                        PlaySound(COMPLETE_FX);
+                    }
                 }
             }
         }
@@ -113,15 +117,13 @@ int main()
         BeginDrawing();
         ClearBackground(black);
         DrawTexture(*curr, 625 + PLAYER_X - CAMERA_X, HEIGHT - GROUND_Y - 130 + CAMERA_Y - PLAYER_Y, white);
-        DrawRectangle(GROUND_X, HEIGHT - GROUND_Y - 104 + CAMERA_Y + 4, 1280, 220, DARKGREEN);
+        DrawTexture(TEXTURE_GROUND, -30 - (CAMERA_X % 30), HEIGHT - GROUND_Y - 100 + CAMERA_Y, background);
 
         for (int j = (Y > 5) ? Y - 6 : 0; j < 90 && j <= Y + 7; j++)
         {
             int x = MAP[j] - CAMERA_X + 625;
             int y = HEIGHT - GROUND_Y - 190 - j * 90 + CAMERA_Y;
             DrawTexture(TEXTURE_BLOCKS, x, y, white);
-            DrawTexture(TEXTURE_BLOCKS, x + 30, y, white);
-            DrawTexture(TEXTURE_BLOCKS, x + 60, y, white);
             // DrawText((std::to_string(x) + ", " + std::to_string(j*90 + 60)).c_str(), x, y-20, 8, white);
         }
 
